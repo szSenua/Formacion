@@ -1,0 +1,42 @@
+-- Creación de la tabla solicitantes
+CREATE TABLE solicitantes (
+    dni VARCHAR(9),
+    apellidos VARCHAR(20),
+    nombre VARCHAR(20),
+    contrasena VARCHAR(9),
+    telefono VARCHAR(11),
+    correo VARCHAR(50),
+    codigocentro VARCHAR(8),
+    coordinadortc BOOLEAN,
+    grupotc BOOLEAN,
+    nombregrupo VARCHAR(5),
+    pbilin BOOLEAN,
+    cargo BOOLEAN,
+    nombrecargo VARCHAR(15),
+    situacion ENUM('activo', 'inactivo'),
+    fechaAlta DATE,
+    especialidad VARCHAR(50),
+    puntos INT(3),
+    PRIMARY KEY (dni)
+);
+
+-- Creación de la tabla cursos
+CREATE TABLE cursos (
+    codigo INT(6),
+    nombre VARCHAR(50),
+    abierto BOOLEAN,
+    numeroplazas INT(2),
+    plazoinscripcion DATE,
+    PRIMARY KEY (codigo)
+);
+
+-- Creación de la tabla solicitudes
+CREATE TABLE solicitudes (
+    dni VARCHAR(9),
+    codigocurso INT(6),
+    fechasolicitud DATE,
+    admitido BOOLEAN,
+    FOREIGN KEY (dni) REFERENCES solicitantes(dni),
+    FOREIGN KEY (codigocurso) REFERENCES cursos(codigo),
+    PRIMARY KEY (dni, codigocurso)
+);
