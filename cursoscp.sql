@@ -30,7 +30,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `calcularPuntos` (IN `dni_param` VAR
 
     -- Lógica para calcular puntos
     SELECT
-        SUM(CASE WHEN coordinadortc THEN 4 ELSE 0 END +
+        SUM(CASE WHEN coordinadortic THEN 4 ELSE 0 END +
             CASE WHEN grupotc THEN 3 ELSE 0 END +
             CASE WHEN pbilin THEN 3 ELSE 0 END +
             CASE WHEN cargo = 1 THEN 2
@@ -60,7 +60,7 @@ DELIMITER ;
 
 CREATE TABLE `administradores` (
   `id` int(11) NOT NULL,
-  `usuario` varchar(9) DEFAULT NULL,
+  `dni` varchar(9) DEFAULT NULL,
   `contrasena` varchar(9) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -92,7 +92,7 @@ CREATE TABLE `solicitantes` (
   `telefono` varchar(11) DEFAULT NULL,
   `correo` varchar(50) DEFAULT NULL,
   `codigocentro` varchar(8) DEFAULT NULL,
-  `coordinadortc` tinyint(1) DEFAULT NULL,
+  `coordinadortic` tinyint(1) DEFAULT NULL,
   `grupotc` tinyint(1) DEFAULT NULL,
   `nombregrupo` varchar(5) DEFAULT NULL,
   `pbilin` tinyint(1) DEFAULT NULL,
