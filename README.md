@@ -2,9 +2,9 @@
 
 ## Consideraciones Iniciales:
 
-- [ ] Crear una tabla para administradores.
-- [ ] Agregar un campo de contraseña (`password`) en la tabla de solicitantes.
-- [ ] Calcular la diferencia entre la fecha de nacimiento y la fecha de alta para obtener el tiempo transcurrido.
+- [x] Crear una tabla para administradores.
+- [x] Agregar un campo de contraseña (`password`) en la tabla de solicitantes.
+- [x] Calcular la diferencia entre la fecha de nacimiento y la fecha de alta para obtener el tiempo transcurrido.
 
 ## Consideraciones sobre Cursos:
 
