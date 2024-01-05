@@ -48,3 +48,42 @@ CREATE TABLE administradores (
     contrasena VARCHAR(9),
     PRIMARY KEY(id)
 );
+
+-- Creación del procedimiento almacenado (idea)
+DELIMITER //
+CREATE PROCEDURE calcularPuntos(IN dni_param VARCHAR(9))
+BEGIN
+    DECLARE puntos INT;
+
+    -- Lógica para calcular puntos
+    SELECT
+        SUM(CASE WHEN coordinadortc THEN 4 ELSE 0 END +
+            CASE WHEN grupotc THEN 3 ELSE 0 END +
+            CASE WHEN pbilin THEN 3 ELSE 0 END +
+            CASE WHEN cargo = 1 THEN 2
+                 WHEN cargo = 2 THEN 2
+                 WHEN cargo = 3 THEN 2
+                 WHEN cargo = 4 THEN 1
+                 ELSE 0 END +
+            CASE WHEN DATEDIFF(CURDATE(), fechaAlta) > 15 THEN 1 ELSE 0 END +
+            CASE WHEN situacion = 'activo' THEN 1 ELSE 0 END)
+    INTO puntos
+    FROM solicitantes
+    WHERE dni = dni_param;
+
+    -- Actualizar puntos en la tabla solicitantes
+    UPDATE solicitantes
+    SET puntos = puntos
+    WHERE dni = dni_param;
+END //
+DELIMITER ;
+
+-- Creación del disparador
+DELIMITER //
+CREATE TRIGGER calcularPuntosAfterInsert
+AFTER INSERT ON solicitantes
+FOR EACH ROW
+BEGIN
+    CALL calcularPuntos(NEW.dni);
+END //
+DELIMITER ;
