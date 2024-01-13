@@ -11,23 +11,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $numeroplazas = isset($_POST['numeroplazas']) ? $_POST['numeroplazas'] : '';
 
     // Convertir la fecha del formato HTML al formato MySQL
-    $plazoinscripcion = isset($_POST['plazoinscripcion']) ? date('Y-m-d', strtotime($_POST['plazoinscripcion'])) : '';
-    var_dump($plazoinscripcion);
+ $fechaPlazoInscripcion = isset($_POST['plazoinscripcion']) ? $_POST['plazoinscripcion'] : '';
+$dateTime = new DateTime($fechaPlazoInscripcion);
+$plazoinscripcion = $dateTime->format('Y-m-d');
+
+    //var_dump($plazoinscripcion);
 
     $abierto = isset($_POST['estadoCurso']) ? ($_POST['estadoCurso'] == '1' ? 1 : 0) : 0;
 
     // Insertar los datos en la base de datos
     $sql = "INSERT INTO cursos (nombre, abierto, numeroplazas, plazoinscripcion) VALUES (?, ?, ?, ?)";
     $stmt = mysqli_prepare($conexion, $sql);
-    mysqli_stmt_bind_param($stmt, "sisi", $nombre, $abierto, $numeroplazas, $plazoinscripcion);
+    mysqli_stmt_bind_param($stmt, "siss", $nombre, $abierto, $numeroplazas, $plazoinscripcion);
 
     //echo "Consulta SQL antes de ejecutarla: " . vsprintf(str_replace('?', "'%s'", $sql), array($nombre, $abierto, $numeroplazas, $plazoinscripcion)) . "<br>";
     
     if (mysqli_stmt_execute($stmt)) {
-        echo '<p style="color: green;">Curso creado con éxito.</p>';
+        header("Location: panel_administracion.php");
     } else {
         echo '<p style="color: red;">Error al crear el curso.</p>';
-        echo '<p style="color: red;">'.mysqli_error($conexion).'</p>'; // Mostrar mensaje de error específico
+        echo '<p style="color: red;">'.mysqli_error($conexion).'</p>';
     }
 
     mysqli_stmt_close($stmt);

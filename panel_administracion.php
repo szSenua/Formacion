@@ -102,7 +102,7 @@ $cursos = obtenerCursos($conexion);
                     <td><?= $curso['abierto'] ? 'Sí' : 'No'; ?></td>
                     <td>
                         <!-- Botones de acciones (actualizar, eliminar) -->
-                        <form action="actualizar_curso.php" method="post" style="display: inline;">
+                        <form action="actualizar_curso.php?codigo=<?php echo $curso['codigo']; ?>" method="post" style="display: inline;">
                             <input type="hidden" name="codigo" value="<?= $curso['codigo']; ?>">
                             <button type="submit" class="btn-accion btn-actualizar">Actualizar</button>
                         </form>
