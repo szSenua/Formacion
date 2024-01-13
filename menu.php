@@ -53,13 +53,13 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'invitado';
 
 <nav>
     
-    <a href="#">Listar Cursos</a>
+    <a href="listar_cursos.php">Listar Cursos</a>
     
 
     <?php
     if ($rol === 'administrador') {
         
-        echo '<a href="#">Panel de Administración</a>';
+        echo '<a href="panel_administracion.php">Panel de Administración</a>';
     }
 
     if($rol === 'solicitante') {
@@ -76,7 +76,6 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'invitado';
     
 </nav>
 
-<h2>Bienvenido <?php echo $_SESSION['nombreUsuario'] ?></h2>
 
 </body>
 </html>
