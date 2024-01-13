@@ -117,4 +117,5 @@ padding: 1em;
 .registro .alert{
     width: 367px;
     color: #680f0f;
+    text-align: justify;
   }

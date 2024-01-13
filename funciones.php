@@ -9,37 +9,43 @@
 <body>
 
 <?php
+require_once 'conecta.php';
 
 //Función para obtener el tipo de usuario
 
-function obtenerTipoUsuario($dni) {
-    // Conectar a la base de datos 
-    require_once 'conecta.php';
+
+function obtenerInfoUsuario($dni, $contrasena) {
+    global $conexion;
 
     // Consultar el tipo de usuario en la tabla administradores
-    $queryAdmin = "SELECT dni FROM administradores WHERE dni='$dni'";
-    $resultAdmin = $conexion->query($queryAdmin);
+    $queryAdmin = "SELECT dni, nombre FROM administradores WHERE dni='$dni' AND contrasena='$contrasena'";
+    $resultAdmin = mysqli_query($conexion, $queryAdmin);
 
-    // Si es un administrador, devolver 'administrador'
-    if ($resultAdmin->num_rows > 0) {
-        return 'administrador';
+    // Si es un administrador, devolver información del administrador
+    if (mysqli_num_rows($resultAdmin) > 0) {
+        $adminData = mysqli_fetch_assoc($resultAdmin);
+        // Cerrar conexión
+        require_once 'desconecta.php';
+        return array('tipo' => 'administrador', 'nombre' => $adminData['nombre']);
     }
 
     // Consultar el tipo de usuario en la tabla solicitantes
-    $querySolicitante = "SELECT dni FROM solicitantes WHERE dni='$dni'";
-    $resultSolicitante = $conexion->query($querySolicitante);
+    $querySolicitante = "SELECT dni, nombre FROM solicitantes WHERE dni='$dni' AND contrasena='$contrasena'";
+    $resultSolicitante = mysqli_query($conexion, $querySolicitante);
 
-    // Si es un solicitante, devolver 'solicitante'
-    if ($resultSolicitante->num_rows > 0) {
-        return 'solicitante';
+    // Si es un solicitante, devolver información del solicitante
+    if (mysqli_num_rows($resultSolicitante) > 0) {
+        $solicitanteData = mysqli_fetch_assoc($resultSolicitante);
+        // Cerrar conexión
+        require_once 'desconecta.php';
+        return array('tipo' => 'solicitante', 'nombre' => $solicitanteData['nombre']);
     }
 
-    // Si no se encuentra en ninguna tabla, devolver null o un valor predeterminado
+    // Si no se encuentra en ninguna tabla, devolver null
     return null;
-
-    // Cerrar conexión
-   require_once 'desconecta.php';
 }
+
+
 
 
 function pintaRegistroSolicitanteConParam($dni, $apellidos, $nombre, $contrasena, $telefono, $correo, $codigocentro, $coordinadortic, $grupotic, $nombregrupo, $pbilin, $cargo, 
@@ -176,18 +182,19 @@ function validarTelefono($telefono) {
     return false;
 }
 
-//Función para validar el código de un centro (CIF)
+//Función validar código del centro
 function validarCodigoCentro($codigo) {
     // Eliminar cualquier caracter que no sea alfanumérico
     $codigoLimpio = preg_replace("/[^a-zA-Z0-9]/", "", $codigo);
 
     // Comprobar si el código tiene un formato válido para centros o CIF en España
-    if (preg_match("/^[a-zA-Z0-9]{9,12}$/", $codigoLimpio)) {
+    if (preg_match("/^[a-zA-Z][0-9]{7}$/", $codigoLimpio)) {
         return true;
     }
 
     return false;
 }
+
 
 
 function pintaLoginconParam($dni, $contrasena, $errores) {

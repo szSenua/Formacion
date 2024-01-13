@@ -15,7 +15,7 @@ if (mysqli_connect_errno()) {
     echo "Error al conectar";
 } else {
     $mensaje = "Conectando a la base de datos <br>";
-    error_log($mensaje, 0);
+    //error_log($mensaje, 0);
 
 }
 

@@ -1,97 +1,82 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
         }
 
-        h2 {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            margin: 0;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            background-color: #eee;
-            text-align: center;
-        }
-
-        nav li {
-            display: inline-block;
-            margin: 10px;
+        nav {
+            background-color: #342042;
+            overflow: hidden;
+            
         }
 
         nav a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
             text-decoration: none;
-            color: #333;
-            padding: 8px 16px;
-            border-radius: 4px;
-            background-color: #ddd;
+            float: left;
+            transition: background-color 0.3s;
         }
 
         nav a:hover {
-            background-color: #bbb;
+            background-color: #714C8F;
+        }
+
+        h1 {
+            color: #000;
+            padding: 10px;
         }
     </style>
     <title>Menú</title>
 </head>
 <body>
-    <h2>Menú</h2>
-    <nav>
-        <ul>
-
 <?php
 
-//Propago sesión y reviso que el usuario esté autenticado, si no redirijo al login
 session_start();
 
-// Verificar si el usuario está autenticado
-if (!isset($_SESSION['usuario'])) {
-    header("Location: login.php");
-    exit();
-}
 
-// incluir funciones
-require_once 'funciones.php';
 
-// Obtener el tipo de usuario (administrador o solicitante) desde la base de datos
-$usuario = $_SESSION['usuario'];
-$tipoUsuario = obtenerTipoUsuario($usuario); 
-
-// Mostrar opciones según el tipo de usuario
-if ($tipoUsuario === 'administrador') {
-    echo '<li><a href="#">Listar todos los cursos</a></li>';
-    echo '<li><a href="#">Abrir y Cerrar cursos mediante checkbox</a></li>';
-    echo '<li><a href="#">Asignar vacantes a los solicitantes</a></li>';
-    echo '<li><a href="#">Eliminar cursos</a></li>';
-    echo '<li><a href="#">Agregar cursos</a></li>';
-} elseif ($tipoUsuario === 'usuario') {
-    echo '<li><a href="#">Visualizar cursos abiertos (o todos y filtrar por abiertos)</a></li>';
-    echo '<li><a href="#">Suscribirse a cursos abiertos</a></li>';
-} else {
-    echo '<li><a href="#">Ver listado de cursos</a></li>';
-}
+// Verifica el rol del usuario
+$rol = isset($_SESSION['tipoUsuario']) ? $_SESSION['tipoUsuario'] : '';
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'invitado';
 ?>
 
-</ul>
-    </nav>
+<nav>
+    
+    <a href="#">Listar Cursos</a>
+    
+
+    <?php
+    if ($rol === 'administrador') {
+        
+        echo '<a href="#">Panel de Administración</a>';
+    }
+
+    if($rol === 'solicitante') {
+        echo '<a href="#">Solicitudes Realizadas</a>';
+    }
+
+    // Verifica si hay un rol para mostrar el enlace correcto
+    if (empty($rol)) {
+        echo '<a href="login.php" style="float: right;">Iniciar Sesión</a>';
+    } else {
+        echo '<a href="logout.php" style="float: right;">Cerrar Sesión</a>';
+    }
+    ?>
+    
+</nav>
+
+<h2>Bienvenido <?php echo $_SESSION['nombreUsuario'] ?></h2>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
