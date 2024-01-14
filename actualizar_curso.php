@@ -1,5 +1,15 @@
 <?php
+
 require_once 'menu.php';
+
+$rol = isset($_SESSION['tipoUsuario']) ? $_SESSION['tipoUsuario'] : '';
+
+if ((!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true  && $rol !== 'administrador')) {
+    // Si no está logado y no es admin
+    header('Location: menu.php');
+    exit(); 
+}
+
 include_once 'conecta.php';
 
 // Obtener el código del curso a actualizar

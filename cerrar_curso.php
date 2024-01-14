@@ -1,5 +1,15 @@
 <?php
 
+session_start();
+
+$rol = isset($_SESSION['tipoUsuario']) ? $_SESSION['tipoUsuario'] : '';
+
+if ((!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true  && $rol !== 'administrador')) {
+    // Si no está logado y no es admin
+    header('Location: menu.php');
+    exit(); 
+}
+
 require_once 'conecta.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

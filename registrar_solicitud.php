@@ -1,4 +1,6 @@
 <?php
+
+
 session_start();
 
 // Verifica si se ha enviado el formulario

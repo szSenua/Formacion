@@ -37,7 +37,7 @@
             padding: 10px;
         }
     </style>
-    <title>Menú</title>
+    <title></title>
 </head>
 <body>
 <?php
@@ -49,6 +49,8 @@ session_start();
 // Verifica el rol del usuario
 $rol = isset($_SESSION['tipoUsuario']) ? $_SESSION['tipoUsuario'] : '';
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'invitado';
+
+
 ?>
 
 <nav>
@@ -64,7 +66,7 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'invitado';
     }
 
     if($rol === 'solicitante') {
-        echo '<a href="#">Solicitudes Realizadas</a>';
+        echo '<a href="solicitudes_realizadas.php">Solicitudes Realizadas</a>';
     }
 
     // Verifica si hay un rol para mostrar el enlace correcto

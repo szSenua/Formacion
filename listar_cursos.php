@@ -1,7 +1,7 @@
 <?php
 
 include_once 'menu.php';
-require_once 'conecta.php';
+
 
 // Errores
 $error = isset($_GET['error']) ? $_GET['error'] : '';
@@ -12,6 +12,8 @@ if ($error == 'curso-no-disponible') {
 } elseif ($error == 'curso-ya-solicitado') {
     echo '<p style="color: red;">Ya has solicitado este curso anteriormente.</p>';
 }
+
+require_once 'conecta.php';
 
 // Consulta para obtener todos los cursos
 $sql = "SELECT * FROM cursos ORDER BY nombre";

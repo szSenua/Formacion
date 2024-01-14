@@ -1,9 +1,5 @@
 <?php
-
 require_once 'menu.php';
-
-include('conecta.php'); 
-
 
 $rol = isset($_SESSION['tipoUsuario']) ? $_SESSION['tipoUsuario'] : '';
 
@@ -13,18 +9,38 @@ if ((!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true  && $rol 
     exit(); 
 }
 
-// Obtener lista de solicitudes pendientes (no admitidas) de cursos abiertos con nombre del curso y plazas disponibles
-$sqlSolicitudes = "SELECT s.*, c.nombre as nombre_curso, c.numeroplazas
+
+
+include('conecta.php'); 
+
+
+/*
+COALESCE((SELECT COUNT(*) FROM solicitudes s2 WHERE s2.dni = s.dni AND s2.admitido = 1), 0) as prioridad
+Calcula la prioridad del solicitante restando el número total de solicitudes admitidas del total de puntos.*/
+
+// Obtener lista de solicitudes pendientes (no admitidas) de cursos abiertos
+$sqlSolicitudes = "SELECT DISTINCT s.*, c.nombre as nombre_curso, c.numeroplazas,
+                          r.puntos - COALESCE((SELECT COUNT(*) FROM solicitudes s2 WHERE s2.dni = s.dni AND s2.admitido = 1), 0) as prioridad,
+                          sol.nombre as nombre_solicitante,
+                          sol.apellidos as apellidos_solicitante
                    FROM solicitudes s
                    INNER JOIN cursos c ON s.codigocurso = c.codigo
-                   WHERE s.admitido = 0 AND c.abierto = 1";
+                   LEFT JOIN resultados r ON s.dni = r.dni
+                   INNER JOIN solicitantes sol ON s.dni = sol.dni
+                   WHERE s.admitido = 0 AND c.abierto = 1
+                   ORDER BY prioridad DESC";
+
+
+
 
 $resultSolicitudes = mysqli_query($conexion, $sqlSolicitudes);
 
 // Obtener lista de solicitantes ordenados por puntos y solicitudes admitidas
-$sqlSolicitantes = "SELECT *
-                    FROM solicitantes
-                    ORDER BY puntos DESC, (SELECT COUNT(*) FROM solicitudes WHERE dni = solicitantes.dni AND admitido = 1) ASC";
+$sqlSolicitantes = "SELECT s1.*, COUNT(s2.id) AS solicitudes_admitidas
+                    FROM solicitantes s1
+                    LEFT JOIN solicitudes s2 ON s1.dni = s2.dni AND s2.admitido = 1
+                    GROUP BY s1.dni
+                    ORDER BY s1.puntos DESC, solicitudes_admitidas ASC";
 
 $resultSolicitantes = mysqli_query($conexion, $sqlSolicitantes);
 
@@ -82,6 +98,7 @@ $resultSolicitantes = mysqli_query($conexion, $sqlSolicitantes);
         <tr>
             <th>ID</th>
             <th>DNI Solicitante</th>
+            <th>Nombre</th>
             <th>Código Curso</th>
             <th>Nombre Curso</th>
             <th>Plazas Disponibles</th>
@@ -94,11 +111,12 @@ $resultSolicitantes = mysqli_query($conexion, $sqlSolicitantes);
             echo "<tr>";
             echo "<td>{$row['id']}</td>";
             echo "<td>{$row['dni']}</td>";
+            echo "<td>{$row['nombre_solicitante']} {$row['apellidos_solicitante']}</td>";
             echo "<td>{$row['codigocurso']}</td>";
             echo "<td>{$row['nombre_curso']}</td>";
             echo "<td>{$row['numeroplazas']}</td>";
             echo "<td>{$row['fechasolicitud']}</td>";
-            echo "<td>{$row['admitido']}</td>";
+            echo "<td>" . ($row['admitido'] == 1 ? 'Sí' : 'No') . "</td>";
             echo "<td>";
             echo "<form method='post' action='procesa_solicitud.php'>";
             echo "<input type='hidden' name='dni' value='{$row['dni']}'>";
@@ -128,11 +146,7 @@ $resultSolicitantes = mysqli_query($conexion, $sqlSolicitantes);
             echo "<td>{$row['apellidos']}</td>";
             echo "<td>{$row['nombre']}</td>";
             echo "<td>{$row['puntos']}</td>";
-            // Contar el número de solicitudes admitidas para este solicitante
-            $sqlCountAdmitidas = "SELECT COUNT(*) FROM solicitudes WHERE dni = '{$row['dni']}' AND admitido = 1";
-            $resultCountAdmitidas = mysqli_query($conexion, $sqlCountAdmitidas);
-            $countAdmitidas = mysqli_fetch_assoc($resultCountAdmitidas)['COUNT(*)'];
-            echo "<td>{$countAdmitidas}</td>";
+            echo "<td>{$row['solicitudes_admitidas']}</td>";
             echo "</tr>";
         }
         ?>
@@ -141,8 +155,7 @@ $resultSolicitantes = mysqli_query($conexion, $sqlSolicitantes);
 </body>
 </html>
 
-
 <?php
-// Cerrar la conexión a la base de datos al finalizar
+// Cerrar la conexión
 require_once 'desconecta.php';
 ?>

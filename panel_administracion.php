@@ -1,6 +1,22 @@
 <?php
 include_once 'menu.php';
+
+$rol = isset($_SESSION['tipoUsuario']) ? $_SESSION['tipoUsuario'] : '';
+
+//var_dump($rol);
+
+// Verifica si el usuario está logueado y no es un administrador
+if ((!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true  && $rol !== 'administrador')) {
+    // Si no está logado y no es administrador
+    header('Location: menu.php');
+    exit();
+}
+
+
 require_once 'conecta.php';
+
+
+
 
 // Función para obtener la lista de cursos desde la base de datos
 function obtenerCursos($conexion){
