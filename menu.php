@@ -60,6 +60,7 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'invitado';
     if ($rol === 'administrador') {
         
         echo '<a href="panel_administracion.php">Panel de Administración</a>';
+        echo '<a href="adjudica_cursos.php">Adjudicaciones</a>';
     }
 
     if($rol === 'solicitante') {
