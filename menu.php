@@ -15,6 +15,8 @@
         nav {
             background-color: #342042;
             overflow: hidden;
+            position: sticky;
+            top: 0;
             
         }
 
