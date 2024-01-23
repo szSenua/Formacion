@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     mysqli_stmt_bind_param($stmt, "sisii", $nombre, $numeroplazas, $plazoinscripcion, $abierto, $codigoCurso);
 
     if (mysqli_stmt_execute($stmt)) {
-        header("Location: actualizar_curso.php");
+        header("Location: panel_administracion.php");
     } else {
         echo '<p style="color: red;">Error al actualizar el curso.</p>';
     }

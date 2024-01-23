@@ -92,15 +92,6 @@ $nombrecargo, $situacion, $especialidad, $errores) {
                 <option value="0" ' . ($coordinadortic == 0 ? 'selected' : '') . '>No</option>
             </select>
 
-        
-
-        
-            
-            <label for="coordinadortic">Coordinador TC:</label>
-            <select name="coordinadortic" >
-                <option value="1" ' . ($coordinadortic == 1 ? 'selected' : '') . '>Sí</option>
-                <option value="0" ' . ($coordinadortic == 0 ? 'selected' : '') . '>No</option>
-            </select>
 
             <label for="grupotc">Grupo TC:</label>
             <select name="grupotic" >
