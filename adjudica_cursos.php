@@ -9,31 +9,25 @@ if ((!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true  && $rol 
     exit(); 
 }
 
-
-
 include('conecta.php'); 
-
-
-/*
-COALESCE((SELECT COUNT(*) FROM solicitudes s2 WHERE s2.dni = s.dni AND s2.admitido = 1), 0) as prioridad
-Calcula la prioridad del solicitante restando el número total de solicitudes admitidas del total de puntos.*/
 
 // Obtener lista de solicitudes pendientes (no admitidas) de cursos abiertos
 $sqlSolicitudes = "SELECT DISTINCT s.*, c.nombre as nombre_curso, c.numeroplazas,
                           r.puntos - COALESCE((SELECT COUNT(*) FROM solicitudes s2 WHERE s2.dni = s.dni AND s2.admitido = 1), 0) as prioridad,
                           sol.nombre as nombre_solicitante,
-                          sol.apellidos as apellidos_solicitante
+                          sol.apellidos as apellidos_solicitante,
+                          (SELECT COUNT(*) FROM solicitudes s3 WHERE s3.dni = s.dni AND s3.admitido = 1) as solicitudes_admitidas
                    FROM solicitudes s
                    INNER JOIN cursos c ON s.codigocurso = c.codigo
                    LEFT JOIN resultados r ON s.dni = r.dni
                    INNER JOIN solicitantes sol ON s.dni = sol.dni
                    WHERE s.admitido = 0 AND c.abierto = 1
-                   ORDER BY prioridad DESC";
-
-
-
+                   ORDER BY solicitudes_admitidas ASC, prioridad DESC, r.puntos DESC";
 
 $resultSolicitudes = mysqli_query($conexion, $sqlSolicitudes);
+
+// Inicializar $resultSolicitantes
+$resultSolicitantes = null;
 
 // Obtener lista de solicitantes ordenados por puntos y solicitudes admitidas
 $sqlSolicitantes = "SELECT s1.*, COUNT(s2.id) AS solicitudes_admitidas
@@ -43,7 +37,6 @@ $sqlSolicitantes = "SELECT s1.*, COUNT(s2.id) AS solicitudes_admitidas
                     ORDER BY s1.puntos DESC, solicitudes_admitidas ASC";
 
 $resultSolicitantes = mysqli_query($conexion, $sqlSolicitantes);
-
 ?>
 
 <!DOCTYPE html>
@@ -72,13 +65,16 @@ $resultSolicitantes = mysqli_query($conexion, $sqlSolicitantes);
             background-color: #f2f2f2;
         }
 
+        th.priority {
+            background-color: #FFD700; /* Color amarillo para la columna de prioridad */
+        }
+
         .btn-accion {
             padding: 8px 12px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
-
 
         .btn-adjudicar {
             background-color: #357EDD;
@@ -104,6 +100,7 @@ $resultSolicitantes = mysqli_query($conexion, $sqlSolicitantes);
             <th>Plazas Disponibles</th>
             <th>Fecha Solicitud</th>
             <th>Admitido</th>
+      
             <th>Acción</th>
         </tr>
         <?php

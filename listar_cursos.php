@@ -101,13 +101,26 @@ $dni = isset($_SESSION['dni']) ? $_SESSION['dni'] : '';
 
                 // Verificar si el usuario es administrador
                 if ($rol === 'administrador') {
+                   
+                    
                     // Mostrar botón "Cerrar" si el curso está abierto y "Abrir" si está cerrado
                     if ($row['abierto'] == 1) {
+                    
+                        echo '<form action="cerrar_curso.php" method="post">';
+                        echo '<input type="hidden" name="codigocurso" value="' . $row['codigo'] . '">';
                         echo '<button class="btn-cerrado">Cerrar</button>';
+                        
+                        echo '</form>';
+                    
                     } else {
-                        echo '<button class="btn-abrir">Abrir</button>';
+                        echo '<form action="abrir_curso.php" method="post">';
+                        echo '<input type="hidden" name="codigocurso" value="' . $row['codigo'] . '">';
+                        echo '<button class="btn-abrir">Abrir</button></form>';
+                        echo '</form>';
                     }
+                    
                 } else if ($rol === 'solicitante') {
+                
                     // Verificar si el curso está cerrado o el plazo de inscripción ha expirado
                     if ($row['abierto'] == 0 || strtotime($row['plazoinscripcion']) < strtotime(date('Y-m-d'))) {
                         echo '<button class="btn-cerrado" disabled>Cerrado</button>';
